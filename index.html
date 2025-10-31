@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Aesthetics Performance Analysis | France vs Benelux</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/recharts@2.10.0/dist/Recharts.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background-color: #FFFFFF;
+            color: #212121;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px;
+            background: linear-gradient(135deg, #F5EFE6 0%, #DABFAA 100%);
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #B87333;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        h2 {
+            color: #212121;
+            font-size: 1.3em;
+            font-weight: 400;
+            margin-bottom: 15px;
+        }
+        
+        .impact-badge {
+            display: inline-block;
+            background-color: #B87333;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 1.1em;
+            margin-top: 10px;
+        }
+        
+        nav {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #F5EFE6;
+            border-radius: 12px;
+        }
+        
+        button {
+            padding: 12px 20px;
+            background-color: white;
+            color: #212121;
+            border: 2px solid #B87333;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            background-color: #B87333;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(184, 115, 51, 0.3);
+        }
+        
+        button.active {
+            background-color: #B87333;
+            color: white;
+        }
+        
+        .chart-container {
+            background-color: #F5EFE6;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .chart-title {
+            color: #212121;
+            font-size: 1.3em;
+            font-weight: 700;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .insight-box {
+            background-color: #DABFAA;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            text-align: center;
+            font-weight: 600;
+            color: #212121;
+            border: 2px solid #212121;
+        }
+        
+        .growth-indicators {
+            display: flex;
+            justify-content: space-around;
+            margin-top: 15px;
+            font-size: 14px;
+        }
+        
+        .growth-france {
+            color: #B87333;
+            font-weight: 700;
+        }
+        
+        .growth-benelux {
+            color: #8B5A3C;
+            font-weight: 700;
+        }
+        
+        footer {
+            margin-top: 60px;
+            padding: 30px;
+            text-align: center;
+            background-color: #F5EFE6;
+            border-radius: 12px;
+        }
+        
+        footer h3 {
+            color: #B87333;
+            margin-bottom: 15px;
+        }
+        
+        footer ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        footer li {
+            margin: 10px 0;
+            font-size: 16px;
+        }
+        
+        .github-link {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 30px;
+            background-color: #B87333;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .github-link:hover {
+            background-color: #8B5A3C;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(184, 115, 51, 0.3);
+        }
+        
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 1.8em;
+            }
+            
+            h2 {
+                font-size: 1.1em;
+            }
+            
+            .chart-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { LineChart, Line, BarChart, Bar, ScatterChart, Scatter, PieChart, Pie, Cell, 
+                XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } = Recharts;
+        const { useState } = React;
+
+        // Sample Aesthetics Brand Colors
+        const COLORS = {
+            copper: '#B87333',
+            palepeach: '#F5EFE6',
+            lighttan: '#DABFAA',
+            darkcharcoal: '#212121',
+            white: '#FFFFFF',
+            darkcopper: '#8B5A3C'
+        };
+
+        // Data (truncated for brevity - using representative sample)
+        const monthlyRevenueData = [
+            { date: '2022-11', france: 0, benelux: 0 },
+            { date: '2022-12', france: 435, benelux: 108 },
+            { date: '2023-03', france: 448, benelux: 112 },
+            { date: '2023-06', france: 548, benelux: 132 },
+            { date: '2023-09', france: 475, benelux: 120 },
+            { date: '2023-12', france: 420, benelux: 102 },
+            { date: '2024-03', france: 525, benelux: 128 },
+            { date: '2024-06', france: 555, benelux: 135 },
+            { date: '2024-09', france: 479, benelux: 120 },
+            { date: '2024-12', france: 435, benelux: 106 },
+            { date: '2025-03', france: 532, benelux: 130 },
+            { date: '2025-06', france: 565, benelux: 138 },
+            { date: '2025-09', france: 497, benelux: 124 },
+            { date: '2025-10', france: 441, benelux: 108 }
+        ];
+
+        const tierPerformanceData = [
+            { tier: 'France Top', value: 291, market: 'France' },
+            { tier: 'France Medium', value: 80, market: 'France' },
+            { tier: 'France Low', value: 22, market: 'France' },
+            { tier: 'Benelux Top', value: 30, market: 'Benelux' },
+            { tier: 'Benelux Medium', value: 24, market: 'Benelux' },
+            { tier: 'Benelux Low', value: 12, market: 'Benelux' }
+        ];
+
+        const coverageConversionData = [
+            { market: 'France', coverage: 65, uplift: 44.8, size: 16900 },
+            { market: 'Benelux', coverage: 66.7, uplift: 15.0, size: 3900 }
+        ];
+
+        const repProductivityData = [
+            { rep: 'R0015', market: 'FR', value: 1255 },
+            { rep: 'R0023', market: 'FR', value: 1240 },
+            { rep: 'R0008', market: 'FR', value: 1207 },
+            { rep: 'R0031', market: 'FR', value: 1188 },
+            { rep: 'R0012', market: 'FR', value: 1165 },
+            { rep: 'R0045', market: 'NL', value: 625 },
+            { rep: 'R0039', market: 'BE', value: 548 },
+            { rep: 'R0018', market: 'FR', value: 1142 },
+            { rep: 'R0042', market: 'NL', value: 465 },
+            { rep: 'R0048', market: 'BE', value: 473 }
+        ];
+
+        const marketShareData = {
+            france: [
+                { name: 'Sample Aesthetics', value: 24.7 },
+                { name: 'Competitors', value: 75.3 }
+            ],
+            benelux: [
+                { name: 'Sample Aesthetics', value: 29.8 },
+                { name: 'Competitors', value: 70.2 }
+            ]
+        };
+
+        const CustomTooltip = ({ active, payload }) => {
+            if (active && payload && payload.length) {
+                return (
+                    <div style={{
+                        backgroundColor: COLORS.white,
+                        border: `2px solid ${COLORS.darkcharcoal}`,
+                        borderRadius: '8px',
+                        padding: '10px',
+                        fontSize: '12px'
+                    }}>
+                        {payload.map((entry, index) => (
+                            <p key={index} style={{ margin: '2px 0', color: entry.color, fontWeight: 'bold' }}>
+                                {entry.name}: {typeof entry.value === 'number' ? Math.round(entry.value) : entry.value}
+                            </p>
+                        ))}
+                    </div>
+                );
+            }
+            return null;
+        };
+
+        const RevenueTrendChart = () => (
+            <div className="chart-container">
+                <h3 className="chart-title">Sales Revenue Trend: France Accelerating, Benelux Plateauing</h3>
+                <ResponsiveContainer width="100%" height={400}>
+                    <LineChart data={monthlyRevenueData}>
+                        <XAxis dataKey="date" stroke={COLORS.darkcharcoal} angle={-45} textAnchor="end" height={80} />
+                        <YAxis stroke={COLORS.darkcharcoal} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend />
+                        <Line type="monotone" dataKey="france" name="France" stroke={COLORS.copper} strokeWidth={3} dot={false} />
+                        <Line type="monotone" dataKey="benelux" name="Benelux" stroke={COLORS.lighttan} strokeWidth={3} dot={false} />
+                    </LineChart>
+                </ResponsiveContainer>
+                <div className="growth-indicators">
+                    <div className="growth-france">France: +14% Growth</div>
+                    <div className="growth-benelux">Benelux: +7% Growth</div>
+                </div>
+            </div>
+        );
+
+        const TierPerformanceChart = () => (
+            <div className="chart-container">
+                <h3 className="chart-title">Revenue per Clinic by Tier: 10x Gap Between Markets</h3>
+                <ResponsiveContainer width="100%" height={400}>
+                    <BarChart data={tierPerformanceData}>
+                        <XAxis dataKey="tier" stroke={COLORS.darkcharcoal} angle={-45} textAnchor="end" height={100} />
+                        <YAxis stroke={COLORS.darkcharcoal} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Bar dataKey="value" name="Revenue (€K)">
+                            {tierPerformanceData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.market === 'France' ? COLORS.copper : COLORS.lighttan} stroke={COLORS.darkcharcoal} strokeWidth={2} />
+                            ))}
+                        </Bar>
+                    </BarChart>
+                </ResponsiveContainer>
+                <div className="insight-box">💡 France Top €291K vs Benelux Top €30K = 10x Gap</div>
+            </div>
+        );
+
+        const CoverageConversionChart = () => (
+            <div className="chart-container">
+                <h3 className="chart-title">Coverage vs Conversion Quality: The Paradox</h3>
+                <ResponsiveContainer width="100%" height={400}>
+                    <ScatterChart>
+                        <XAxis type="number" dataKey="coverage" domain={[60, 70]} stroke={COLORS.darkcharcoal} />
+                        <YAxis type="number" dataKey="uplift" domain={[10, 50]} stroke={COLORS.darkcharcoal} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Legend />
+                        <Scatter name="France" data={[coverageConversionData[0]]} fill={COLORS.copper} stroke={COLORS.darkcharcoal} strokeWidth={2}>
+                            <Cell r={25} />
+                        </Scatter>
+                        <Scatter name="Benelux" data={[coverageConversionData[1]]} fill={COLORS.lighttan} stroke={COLORS.darkcharcoal} strokeWidth={2}>
+                            <Cell r={25} />
+                        </Scatter>
+                    </ScatterChart>
+                </ResponsiveContainer>
+                <div className="insight-box">🔍 Same coverage, 3x different conversion</div>
+            </div>
+        );
+
+        const RepProductivityChart = () => (
+            <div className="chart-container">
+                <h3 className="chart-title">Top 10 Rep Productivity: Revenue per Visit</h3>
+                <ResponsiveContainer width="100%" height={400}>
+                    <BarChart data={repProductivityData} layout="vertical">
+                        <XAxis type="number" stroke={COLORS.darkcharcoal} />
+                        <YAxis type="category" dataKey="rep" stroke={COLORS.darkcharcoal} width={80} />
+                        <Tooltip content={<CustomTooltip />} />
+                        <Bar dataKey="value" name="Rev/Visit (€)">
+                            {repProductivityData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.market === 'FR' ? COLORS.copper : COLORS.lighttan} stroke={COLORS.darkcharcoal} strokeWidth={1.5} />
+                            ))}
+                        </Bar>
+                    </BarChart>
+                </ResponsiveContainer>
+                <div className="growth-indicators">
+                    <div className="growth-france">France Avg: €1,172</div>
+                    <div className="growth-benelux">Benelux Avg: €484</div>
+                </div>
+            </div>
+        );
+
+        const MarketShareChart = () => (
+            <div className="chart-container">
+                <h3 className="chart-title">Market Share: Higher in Benelux Despite Lower Revenue</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-around', flexWrap: 'wrap' }}>
+                    <div style={{ width: '45%', minWidth: '300px' }}>
+                        <h4 style={{ textAlign: 'center', color: COLORS.copper, margin: '10px 0' }}>France (24.7%)</h4>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <PieChart>
+                                <Pie data={marketShareData.france} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ value }) => `${value.toFixed(1)}%`}>
+                                    <Cell fill={COLORS.copper} stroke={COLORS.darkcharcoal} strokeWidth={2} />
+                                    <Cell fill="#D3D3D3" stroke={COLORS.darkcharcoal} strokeWidth={2} />
+                                </Pie>
+                                <Tooltip content={<CustomTooltip />} />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                    <div style={{ width: '45%', minWidth: '300px' }}>
+                        <h4 style={{ textAlign: 'center', color: COLORS.lighttan, margin: '10px 0' }}>Benelux (29.8%)</h4>
+                        <ResponsiveContainer width="100%" height={300}>
+                            <PieChart>
+                                <Pie data={marketShareData.benelux} cx="50%" cy="50%" outerRadius={80} dataKey="value" label={({ value }) => `${value.toFixed(1)}%`}>
+                                    <Cell fill={COLORS.lighttan} stroke={COLORS.darkcharcoal} strokeWidth={2} />
+                                    <Cell fill="#D3D3D3" stroke={COLORS.darkcharcoal} strokeWidth={2} />
+                                </Pie>
+                                <Tooltip content={<CustomTooltip />} />
+                            </PieChart>
+                        </ResponsiveContainer>
+                    </div>
+                </div>
+            </div>
+        );
+
+        function App() {
+            const [activeChart, setActiveChart] = useState('all');
+
+            const charts = {
+                revenue: <RevenueTrendChart />,
+                tier: <TierPerformanceChart />,
+                coverage: <CoverageConversionChart />,
+                rep: <RepProductivityChart />,
+                market: <MarketShareChart />
+            };
+
+            return (
+                <div className="container">
+                    <header>
+                        <h1>Sample Aesthetics Performance Analysis</h1>
+                        <h2>France vs Benelux Market Comparison (Nov 2022 - Oct 2025)</h2>
+                        <div className="impact-badge">€1.5M+ Revenue Opportunity Identified</div>
+                    </header>
+
+                    <nav>
+                        <button className={activeChart === 'all' ? 'active' : ''} onClick={() => setActiveChart('all')}>All Charts</button>
+                        <button className={activeChart === 'revenue' ? 'active' : ''} onClick={() => setActiveChart('revenue')}>Revenue Trend</button>
+                        <button className={activeChart === 'tier' ? 'active' : ''} onClick={() => setActiveChart('tier')}>Tier Performance</button>
+                        <button className={activeChart === 'coverage' ? 'active' : ''} onClick={() => setActiveChart('coverage')}>Coverage vs Conversion</button>
+                        <button className={activeChart === 'rep' ? 'active' : ''} onClick={() => setActiveChart('rep')}>Rep Productivity</button>
+                        <button className={activeChart === 'market' ? 'active' : ''} onClick={() => setActiveChart('market')}>Market Share</button>
+                    </nav>
+
+                    <main>
+                        {activeChart === 'all' ? (
+                            <>
+                                <RevenueTrendChart />
+                                <TierPerformanceChart />
+                                <CoverageConversionChart />
+                                <RepProductivityChart />
+                                <MarketShareChart />
+                            </>
+                        ) : (
+                            charts[activeChart]
+                        )}
+                    </main>
+
+                    <footer>
+                        <h3>Key Findings</h3>
+                        <ul>
+                            <li>• 10x tier performance gap (France €291K vs Benelux €30K)</li>
+                            <li>• Coverage paradox: 67% coverage but only 15% uplift in Benelux</li>
+                            <li>• 2.4x rep productivity gap (€1,172 vs €484 per visit)</li>
+                            <li>• France growth accelerating (+14%) while Benelux plateaus (+7%)</li>
+                        </ul>
+                        <a href="https://github.com/YOURUSERNAME/sample-aesthetics-analysis" className="github-link" target="_blank" rel="noopener noreferrer">
+                            View Full Analysis on GitHub →
+                        </a>
+                        <p style={{ marginTop: '20px', fontStyle: 'italic', fontSize: '14px', color: COLORS.darkcharcoal }}>
+                            Built with React + Recharts | Sample Aesthetics Brand Style
+                        </p>
+                    </footer>
+                </div>
+            );
+        }
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
