@@ -1,0 +1,116 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+  background-color: #F5EFE6;
+  color: #212121;
+  padding: 20px;
+}
+
+h1 {
+  font-size: 28px;
+  font-weight: bold;
+  color: #B87333;
+  margin-bottom: 10px;
+}
+
+h2 {
+  font-size: 20px;
+  font-weight: 600;
+  color: #212121;
+  margin-top: 40px;
+  margin-bottom: 20px;
+}
+
+h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #212121;
+  margin-bottom: 10px;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  background-color: #FFFFFF;
+  padding: 40px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.visual-container {
+  background-color: #FFFFFF;
+  padding: 30px;
+  margin-bottom: 40px;
+  border-radius: 8px;
+  border: 1px solid #DABFAA;
+}
+
+.visual-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: #B87333;
+  margin-bottom: 20px;
+}
+
+.metric-card {
+  background-color: #F5EFE6;
+  padding: 15px;
+  border-radius: 4px;
+  border-left: 4px solid #B87333;
+  margin-bottom: 10px;
+}
+
+.metric-label {
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 4px;
+}
+
+.metric-value {
+  font-size: 20px;
+  font-weight: bold;
+  color: #B87333;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+table th {
+  background-color: #B87333;
+  color: white;
+  padding: 12px;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #DABFAA;
+  font-size: 13px;
+}
+
+table tr:hover {
+  background-color: #F5EFE6;
+}
+
+.two-column {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 30px;
+  margin-top: 20px;
+}
+
+@media (max-width: 768px) {
+  .two-column {
+    grid-template-columns: 1fr;
+  }
+}
